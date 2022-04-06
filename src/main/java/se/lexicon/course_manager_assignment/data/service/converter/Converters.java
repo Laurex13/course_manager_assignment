@@ -18,4 +18,6 @@ public interface Converters {
     List<CourseView> coursesToCourseViews(Collection<Course> courses);
 
     List<StudentView> studentsToStudentViews(Collection<Student> students);
+
+
 }

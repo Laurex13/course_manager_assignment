@@ -8,13 +8,12 @@ import se.lexicon.course_manager_assignment.model.Student;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Locale;
 
 
 public class StudentCollectionRepository implements StudentDao {
 
     private Collection<Student> students;
-    private Student student;
-    boolean isStudentRemoved = false;
 
     public StudentCollectionRepository(Collection<Student> students) {
         this.students = students;
@@ -22,45 +21,39 @@ public class StudentCollectionRepository implements StudentDao {
 
     @Override
     public Student createStudent(String name, String email, String address) {
-        student = new Student(StudentSequencer.nextStudentId());
-        student.setName(name);
-        student.setEmail(email);
-        student.setAddress(address);
-        student.setId(student.getId());
-
-
+        int studentId = StudentSequencer.nextStudentId();
+        Student student = new Student(studentId,name,email,address);
+        students.add(student);
         return student;
     }
 
     @Override
     public Student findByEmailIgnoreCase(String email) {
-        Student _nStudent = new Student();
-        for (Student nStudent: students){
-            if (nStudent.getEmail().equalsIgnoreCase(email)){
-                _nStudent = nStudent;
+        for (Student student: students){
+            if (student.getEmail().toLowerCase(Locale.ROOT).contains(email.trim().toLowerCase(Locale.ROOT)))
+               return student;
             }
-        }
-        return student;
+        return null;
     }
 
     @Override
     public Collection<Student> findByNameContains(String name) {
-        Collection<Student> studentCol = new ArrayList<Student>();
-        for (Student student: students){
-            if (student.getName().equalsIgnoreCase(name)){
-           studentCol.add(student);
+        Collection<Student> studentNameContains = new ArrayList<Student>();
+        for (Student student: students) {
+            if (student.getName().equalsIgnoreCase(name)) {
+                studentNameContains.add(student);
             }
         }
-        return studentCol;
+        return studentNameContains;
     }
 
     @Override
     public  Student findById(int id) {
-        Student searchStudents = new Student(0, null, null, null);
+        Student searchStudents = new Student(0, "", "", "");
         for (Student student: students) {
-            if(student.getId() == id){
+            if(student.getStudentId() == id){
+                searchStudents.setStudentId(student.getStudentId());
                 searchStudents.setName(student.getName());
-                searchStudents.setId(student.getId());
                 searchStudents.setAddress(student.getAddress());
                 searchStudents.setEmail(student.getEmail());
             }
@@ -72,19 +65,15 @@ public class StudentCollectionRepository implements StudentDao {
 
     @Override
     public Collection<Student> findAll() {
+        HashSet<Student> allStudents = new HashSet<>();
+        allStudents.addAll(students);
 
-        return students;
+        return allStudents;
     }
 
     @Override
     public boolean removeStudent(Student student) {
-
-        isStudentRemoved = false;
-        if(students.contains(student)) {
-            students.remove(student);
-            isStudentRemoved = true;
-        }
-        return isStudentRemoved;
+        return students.remove(student);
     }
 
     @Override

@@ -3,33 +3,28 @@ package se.lexicon.course_manager_assignment.model;
 import java.util.Objects;
 
 public class Student {
-    int id;
+    private int studentId;
     String name;
     String email;
     String address;
 
-    public Student(int id,String name, String email, String address){
-        this.id = id;
+    public Student(int studentId,String name, String email, String address){
+        this.studentId = studentId;
         this.name = name;
         this.email = email;
         this.address = address;
 
     }
 
-    public Student(int id) {
-        this.id = id;
-    }
-
     public Student() {
-
     }
 
-    public int getId() {
-        return id;
+    public int getStudentId() {
+        return studentId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setStudentId(int studentId) {
+        this.studentId = studentId;
     }
 
     public String getName() {
@@ -56,26 +51,29 @@ public class Student {
         this.address = address;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Student)) return false;
         Student student = (Student) o;
-        return id == student.id && name.equals(student.name) && email.equals(student.email) && address.equals(student.address);
+        return getStudentId() == student.getStudentId() && Objects.equals(getName(), student.getName()) && Objects.equals(getEmail(), student.getEmail()) && Objects.equals(getAddress(), student.getAddress());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email, address);
+        return Objects.hash(getStudentId(), getName(), getEmail(), getAddress());
     }
 
     @Override
     public String toString() {
         return "Student{" +
-                "id=" + id +
+                "studentId=" + studentId +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", address='" + address + '\'' +
                 '}';
     }
+
+
 }

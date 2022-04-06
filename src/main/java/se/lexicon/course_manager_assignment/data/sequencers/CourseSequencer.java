@@ -4,7 +4,7 @@ public class CourseSequencer {
     private static int courseSequencer;
 
     public static int nextCourseId(){
-        return courseSequencer++;
+        return ++courseSequencer;
     }
 
     public static int getCourseSequencer() {
@@ -14,4 +14,6 @@ public class CourseSequencer {
     public static void setCourseSequencer(int courseSequencer) {
         CourseSequencer.courseSequencer = courseSequencer;
     }
+
+    public static void resetCourseSequencer() {courseSequencer = 0;}
 }

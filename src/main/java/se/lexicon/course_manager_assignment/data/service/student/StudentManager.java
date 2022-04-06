@@ -8,6 +8,8 @@ import se.lexicon.course_manager_assignment.data.service.converter.Converters;
 import se.lexicon.course_manager_assignment.dto.forms.CreateStudentForm;
 import se.lexicon.course_manager_assignment.dto.forms.UpdateStudentForm;
 import se.lexicon.course_manager_assignment.dto.views.StudentView;
+import se.lexicon.course_manager_assignment.model.Course;
+import se.lexicon.course_manager_assignment.model.Student;
 
 
 import java.util.List;
@@ -28,36 +30,54 @@ public class StudentManager implements StudentService {
 
     @Override
     public StudentView create(CreateStudentForm form) {
-        return null;
+
+        return converters.studentToStudentView(studentDao.createStudent(form.getName(), form.getEmail(), form.getAddress()));
     }
 
     @Override
     public StudentView update(UpdateStudentForm form) {
-        return null;
+        Student student = studentDao.findById(form.getId());
+        if(student != null){
+            student.setName(form.getName());
+            student.setEmail(form.getEmail());
+            student.setAddress(form.getAddress());
+        }
+        return converters.studentToStudentView(student);
     }
 
     @Override
     public StudentView findById(int id) {
-        return null;
+        return converters.studentToStudentView(studentDao.findById(id));
     }
 
     @Override
     public StudentView searchByEmail(String email) {
+        Student student = studentDao.findByEmailIgnoreCase(email);
+        if (student != null) {
+            return converters.studentToStudentView(student);
+        }
         return null;
     }
 
     @Override
     public List<StudentView> searchByName(String name) {
-        return null;
+
+        return converters.studentsToStudentViews(studentDao.findByNameContains(name));
     }
 
     @Override
     public List<StudentView> findAll() {
-        return null;
+
+        return converters.studentsToStudentViews(studentDao.findAll());
     }
 
     @Override
     public boolean deleteStudent(int id) {
-        return false;
+        for (Course course : courseDao.findByStudentId(id)){
+            for (Student student : course.getStudents()) {
+                course.unenrollStudent(student);
+            }
+            }
+        return studentDao.removeStudent(studentDao.findById(id));
     }
 }

@@ -4,7 +4,7 @@ public class StudentSequencer {
     private static int studentSequencer;
 
     public static int nextStudentId(){
-        return studentSequencer++;
+        return ++studentSequencer;
     }
 
     public static int getStudentSequencer() {

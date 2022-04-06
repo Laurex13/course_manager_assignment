@@ -2,7 +2,9 @@ package se.lexicon.course_manager_assignment.data.dao;
 
 
 
+import se.lexicon.course_manager_assignment.data.sequencers.CourseSequencer;
 import se.lexicon.course_manager_assignment.model.Course;
+import se.lexicon.course_manager_assignment.model.Student;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,105 +15,89 @@ import java.util.List;
 
 public class CourseCollectionRepository implements CourseDao{
 
-   // private static List<Course> courses = new ArrayList<>();
-
-    boolean isCourseRemoved = false;
-
-
     private Collection<Course> courses;
 
-    public CourseCollectionRepository(Collection<Course> courses) {
+    public CourseCollectionRepository(Collection<Course> courses) { this.courses = courses;
 
     }
 
-
-    // public CourseCollectionRepository(Collection<Course> courses) {
-     //   this.courses = courses;
-   // }
-
     @Override
     public Course createCourse(String courseName, LocalDate startDate, int weekDuration) {
-
+        int courseId = CourseSequencer.nextCourseId();
         courses.add((Course) courses);
     return createCourse(" ",startDate,weekDuration);
     }
 
     @Override
     public Course findById(int id) {
-        Course searchCourse = null;
-        for (Course course : courses){
-            if(course.getId() == id){
-                searchCourse = course;
-                break;
+        for (Course course : courses) {
+            if (id == course.getCourseId()) {
+                return course;
             }
         }
-        return searchCourse;
+        return null;
     }
 
     @Override
     public Collection<Course> findByNameContains(String name) {
-        List<Course> searchCourse = new ArrayList<>();
+        List<Course> courseNameContains = new ArrayList<>();
         for (Course course: courses){
             if(course.getCourseName() == name){
-                searchCourse.add(course);
+                courseNameContains.add(course);
             }
         }
-        return searchCourse;
+        return courseNameContains;
     }
 
     @Override
     public Collection<Course> findByDateBefore(LocalDate end) {
 
-        List<Course> searchCourse = new ArrayList<>();
+        List<Course> courseDateBefore = new ArrayList<>();
         for (Course course: courses){
             if(course.getStartDate() == end){
-                searchCourse.add(course);
+                courseDateBefore.add(course);
             }
         }
-        return searchCourse;
+        return courseDateBefore;
     }
 
     @Override
     public Collection<Course> findByDateAfter(LocalDate start) {
 
-        List<Course> searchCourse = new ArrayList<>();
+        List<Course> courseDateAfter = new ArrayList<>();
         for (Course course: courses){
             if(course.getStartDate() == start){
-                searchCourse.add(course);
+                courseDateAfter.add(course);
             }
         }
-        return searchCourse;
+        return courseDateAfter;
     }
 
     @Override
     public Collection<Course> findAll() {
+        List<Course> allCourses = new ArrayList<>();
+        allCourses.addAll(courses);
 
-        return courses;
+        return allCourses;
     }
 
     @Override
     public Collection<Course> findByStudentId(int studentId) {
-
-        Course searchCourse = null;
+        Collection<Course> coursesFoundByStudentId = new HashSet<>();
         for (Course course : courses){
-            if(course.getId() == studentId){
-                searchCourse = course;
-                break;
+            for (Student student : course.getStudents()){
+                if(student.getStudentId() == studentId) {
+                    coursesFoundByStudentId.add(course);
+                }
             }
         }
-        return findByStudentId(studentId);
+        return coursesFoundByStudentId;
     }
 
     @Override
     public boolean removeCourse(Course course) {
-
-        isCourseRemoved = false;
-        if(courses.contains(course)){
-            courses.remove(course);
-            isCourseRemoved = true;
+       return courses.remove(course);
         }
-        return isCourseRemoved;
-    }
 
     @Override
     public void clear() {
